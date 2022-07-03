@@ -1,2 +1,10 @@
 @import './common';
 @import './example';
+
+.search-form {
+  background-color: #4267b2;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  display: flex;
+  justify-content: center;
+}
