@@ -22,13 +22,13 @@ refs.form.addEventListener('submit', onSubmit);
 let searchText = null;
 
 async function onSubmit(event) {
-  console.log('submit форми');
+  // console.log('submit форми');
   event.preventDefault();
   saveSearchText(refs.input.value);
-  console.log(event.currentTarget);
-  console.log('відправити запит на сервер');
+  // console.log(event.currentTarget);
+  // console.log('відправити запит на сервер');
   const response = await getPhotos(searchText);
-  console.log('отримати відповідь від сервера');
+  // console.log('отримати відповідь від сервера');
   // await responseDataContainsControl(response);
   console.log('response', response);
   console.log('response.data', response.data);
@@ -45,19 +45,34 @@ async function onSubmit(event) {
   const markup = markupItems(response.data.hits);
 
   console.log('додати розмітку на сторінку');
-  refs.gallery.innerHTML = markup;
+  refs.gallery.insertAdjacentHTML('beforeend', markup);
 }
 
 function saveSearchText(text) {
+  if (searchText !== text) {
+    clearInterface();
+  }
   searchText = text;
+}
+
+function clearInterface() {
+  refs.gallery.innerHTML = '';
 }
 
 /*  */
 function getPhotos(searchText) {
+  const searchParams = new URLSearchParams({
+    key: '28388902-8d9f79c473b0c7ec620d22f12',
+    q: `${searchText}`,
+    image_type: 'photo',
+    orientation: 'horizontal',
+    safesearch: 'true',
+    page: 1,
+    per_page: 40,
+  });
+
   try {
-    const response = axios.get(
-      `https://pixabay.com/api/?key=28388902-8d9f79c473b0c7ec620d22f12&q=${searchText}&image_type=photo&orientation=horizontal&safesearch=true`
-    );
+    const response = axios.get(`https://pixabay.com/api/?${searchParams}`);
     // console.log(response);
     return response;
   } catch (error) {
@@ -71,22 +86,26 @@ function markupItems(items) {
 
 function markupOneItem(item) {
   return `
-  <div class="photo-card">
-  <img src="${item.webformatURL}" alt="${item.tags}" loading="lazy" />
-  <div class="info">
-    <p class="info-item">
-      <b>${item.likes}</b>
-    </p>
-    <p class="info-item">
-      <b>${item.views}</b>
-    </p>
-    <p class="info-item">
-      <b>${item.comments}</b>
-    </p>
-    <p class="info-item">
-      <b>${item.downloads}</b>
-    </p>
+  <div class="photo-card gallery__item">
+    <img class="gallery__image" src="${item.webformatURL}" alt="${item.tags}" loading="lazy" />
+    <div class="info">
+      <div class="info-item">
+        <p>Likes</p>
+        <p><b>${item.likes}</b></p>
+      </div>
+      <div class="info-item">
+        <p>Views</p>
+        <p><b>${item.views}</b></p>
+      </div>
+      <div class="info-item">
+        <p>Comments</p>
+        <p><b>${item.comments}</b></p>
+      </div>
+      <div class="info-item">
+        <p>Downloads</p>
+        <p><b>${item.downloads}</b></p>
+      </div>
+    </div>
   </div>
-</div>
   `;
 }
