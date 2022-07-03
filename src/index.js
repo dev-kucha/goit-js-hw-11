@@ -10,30 +10,20 @@ const refs = {
   form: document.querySelector('.search-form'),
   input: document.querySelector('input'),
   gallery: document.querySelector('.gallery'),
+  loadMoreBtn: document.querySelector('.load-more'),
 };
-// const inputField = document.querySelector('form input'),
-
-// refs.form.addEventListener('input', onInput);
-refs.form.addEventListener('submit', onSubmit);
-
-// function onInput(event) {
-//   console.log(event.target.value);
-// }
 let searchText = null;
+let page = 1;
+const perPage = 40;
+
+refs.form.addEventListener('submit', onSubmit);
+refs.loadMoreBtn.addEventListener('click', onClickLoadMore);
 
 async function onSubmit(event) {
-  // console.log('submit форми');
   event.preventDefault();
+  refs.loadMoreBtn.classList.remove('is-visible');
   saveSearchText(refs.input.value);
-  // console.log(event.currentTarget);
-  // console.log('відправити запит на сервер');
   const response = await getPhotos(searchText);
-  // console.log('отримати відповідь від сервера');
-  // await responseDataContainsControl(response);
-  console.log('response', response);
-  console.log('response.data', response.data);
-  console.log('response.data.hits', response.data.hits);
-  console.log('response.data.hits.length', response.data.hits.length);
   if (response.data.hits.length == 0) {
     Notiflix.Notify.failure(
       'Sorry, there are no images matching your search query. Please try again.'
@@ -41,16 +31,32 @@ async function onSubmit(event) {
     return;
   }
 
-  console.log('сформувати розмітку');
   const markup = markupItems(response.data.hits);
-
-  console.log('додати розмітку на сторінку');
   refs.gallery.insertAdjacentHTML('beforeend', markup);
+  // console.log(Math.ceil(response.data.totalHits / perPage));
+  if (Math.ceil(response.data.totalHits / perPage) > page) {
+    refs.loadMoreBtn.classList.add('is-visible');
+  }
+  page += 1;
+}
+
+async function onClickLoadMore() {
+  refs.loadMoreBtn.classList.remove('is-visible');
+  const response = await getPhotos(searchText);
+  const markup = markupItems(response.data.hits);
+  refs.gallery.insertAdjacentHTML('beforeend', markup);
+
+  // console.log(Math.ceil(response.data.totalHits / perPage));
+  if (Math.ceil(response.data.totalHits / perPage) > page) {
+    refs.loadMoreBtn.classList.add('is-visible');
+  }
+  page += 1;
 }
 
 function saveSearchText(text) {
   if (searchText !== text) {
     clearInterface();
+    page = 1;
   }
   searchText = text;
 }
@@ -67,8 +73,8 @@ function getPhotos(searchText) {
     image_type: 'photo',
     orientation: 'horizontal',
     safesearch: 'true',
-    page: 1,
-    per_page: 40,
+    page: `${page}`,
+    per_page: `${perPage}`,
   });
 
   try {

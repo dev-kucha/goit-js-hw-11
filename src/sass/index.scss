@@ -13,12 +13,13 @@
 .gallery {
   display: grid;
   max-width: 1140px;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  grid-auto-rows: 310px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-auto-rows: 240px;
   grid-gap: 12px;
   justify-content: center;
   margin-left: auto;
   margin-right: auto;
+  margin-bottom: 24px;
 }
 
 .gallery__item {
@@ -28,7 +29,7 @@
 }
 
 .gallery__image {
-  height: 240px;
+  height: 180px;
   width: 100%;
   object-fit: cover;
   transition: transform var(--animation-duration) var(--timing-function);
@@ -41,5 +42,18 @@
 
 .info-item {
   text-align: center;
-  font-size: 12px;
+  font-size: 10px;
+}
+
+.load-more {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  display: none;
+  background-color: #4267b2;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.load-more.is-visible {
+  display: block;
 }
