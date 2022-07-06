@@ -46,8 +46,12 @@ async function onClickLoadMore() {
   const markup = markupItems(response.data.hits);
   refs.gallery.insertAdjacentHTML('beforeend', markup);
 
-  // console.log(Math.ceil(response.data.totalHits / perPage));
+  // console.log(response.data.totalHits);
+
   if (Math.ceil(response.data.totalHits / perPage) > page) {
+    Notiflix.Notify.success(
+      `Hooray! We found ${response.data.totalHits} images`
+    );
     refs.loadMoreBtn.classList.add('is-visible');
   } else {
     Notiflix.Notify.warning(
