@@ -49,6 +49,10 @@ async function onClickLoadMore() {
   // console.log(Math.ceil(response.data.totalHits / perPage));
   if (Math.ceil(response.data.totalHits / perPage) > page) {
     refs.loadMoreBtn.classList.add('is-visible');
+  } else {
+    Notiflix.Notify.warning(
+      'Sorry, there are no images matching your search query. Please try again.'
+    );
   }
   page += 1;
 }
